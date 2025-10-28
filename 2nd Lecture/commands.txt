@@ -1,0 +1,162 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Try the new cross-platform PowerShell https://aka.ms/pscore6
+
+PS G:\docker-python-lab> docker run hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+PS G:\docker-python-lab> docker run -d --name demo-nginx -p 8082:80 nginx
+58892b914cb15159723fb98cf27bc4534d354186e6e314cc7bd9f4005df13a51
+PS G:\docker-python-lab> docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+58892b914cb1   nginx     "/docker-entrypoint.…"   5 seconds ago   Up 5 seconds   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp   demo-nginx
+PS G:\docker-python-lab> docker stop demo-nginx
+demo-nginx
+PS G:\docker-python-lab>
+PS G:\docker-python-lab> docker rm demo-nginx
+demo-nginx
+PS G:\docker-python-lab> docker run -d --name nginx-vol -p 8081:80 -v demo-vol:/usr/share/nginx/html nginx
+dc53bde98e598d97a0760d8060aa5430bcab9ccebfebcb2d851807b71be52c33
+PS G:\docker-python-lab> docker exec -it nginx-vol bash
+root@dc53bde98e59:/# cd /usr/share/nginx/html
+root@dc53bde98e59:/usr/share/nginx/html# ls
+50x.html  index.html
+root@dc53bde98e59:/usr/share/nginx/html# exit
+exit                                                                                                                    [+] Building 2.2s (11/11) FINISHED                                                                 docker:desktop-linux  => [internal] load build definition from Dockerfile                                                               0.0s  => => transferring dockerfile: 389B                                                                               0.0s  => [internal] load metadata for docker.io/library/python:3.11-slim                                                1.9s
+ => [auth] library/python:pull token for registry-1.docker.io                                                      0.0s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [1/5] FROM docker.io/library/python:3.11-slim@sha256:a0939570b38cddeb861b8e75d20b1c8218b21562b18f301171904b54  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:a0939570b38cddeb861b8e75d20b1c8218b21562b18f301171904b54  0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 130B                                                                                  0.0s
+ => CACHED [2/5] WORKDIR /app                                                                                      0.0s
+ => CACHED [3/5] COPY app/requirements.txt .                                                                       0.0s
+ => CACHED [4/5] RUN pip install --no-cache-dir -r requirements.txt                                                0.0s
+ => CACHED [5/5] COPY app/ ./                                                                                      0.0s
+ => exporting to image                                                                                             0.1s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:b46ad13f9cd1ed99d1bf08d78eeeaaf3082705d254e05d0f789aaf7cec56d123                  0.0s
+ => => exporting config sha256:bfb8ed024442b8a907930d9893c51fa34ac9aaf90d43894b0427eaf9cfea38ea                    0.0s
+ => => exporting attestation manifest sha256:94eaf82b368f94325e6fa4d4ef4db2ac5e323b22f5b6615a6a0125473d47ffe2      0.0s
+ => => exporting manifest list sha256:99e67b07670c8bd789536d712dfcf0242c22c8b011f6fecd9016b9a28c180902             0.0s
+ => => naming to docker.io/sahilp/flask-lab3:v1                                                                    0.0s
+ => => unpacking to docker.io/sahilp/flask-lab3:v1                                                                 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/i74ep5yhutfa8arkox9g8ze2k
+PS G:\docker-python-lab> docker run -d --name flask-lab -p 5000:5000 sahilp/flask-lab3:v1
+docker: Error response from daemon: Conflict. The container name "/flask-lab" is already in use by container "6415271425bb0eed0b4fc1e7f20aabba7191e6ec1a43a88773234823c45c9ab9". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+PS G:\docker-python-lab> docker run -d --name flask-lab3 -p 5000:5000 sahilp/flask-lab3:v1
+e9dd6b5e5255ca3f52447bca67db67be00ddffc7e7d18a6ca16853b1b1da0083
+PS G:\docker-python-lab> docker ps
+CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+e9dd6b5e5255   sahilp/flask-lab3:v1   "python app.py"          9 seconds ago   Up 8 seconds   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   flask-lab3
+dc53bde98e59   nginx                  "/docker-entrypoint.…"   8 minutes ago   Up 8 minutes   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp       nginx-vol
+PS G:\docker-python-lab> curl http://localhost:5000/
+
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"message":"Hello from containerized Flask app!"}
+
+RawContent        : HTTP/1.1 200 OK
+                    Connection: close
+                    Content-Length: 50
+                    Content-Type: application/json
+                    Date: Fri, 26 Sep 2025 18:53:05 GMT
+                    Server: Werkzeug/3.1.3 Python/3.11.13
+
+                    {"message":"Hello from containeriz...
+Forms             : {}
+Headers           : {[Connection, close], [Content-Length, 50], [Content-Type, application/json], [Date, Fri, 26 Sep
+                    2025 18:53:05 GMT]...}
+Images            : {}
+InputFields       : {}
+Links             : {}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 50
+
+
+
+[+] Building 1.5s (12/12) FINISHED
+ => [internal] load local bake definitions                                                                         0.0s  => => reading from stdin 358B                                                                                     0.0s  => [internal] load build definition from Dockerfile                                                               0.0s  => => transferring dockerfile: 389B                                                                               0.0s  => [internal] load metadata for docker.io/library/python:3.11-slim                                                0.9s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [1/5] FROM docker.io/library/python:3.11-slim@sha256:a0939570b38cddeb861b8e75d20b1c8218b21562b18f301171904b54  0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:a0939570b38cddeb861b8e75d20b1c8218b21562b18f301171904b54  0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 130B                                                                                  0.0s
+ => CACHED [2/5] WORKDIR /app                                                                                      0.0s
+ => CACHED [3/5] COPY app/requirements.txt .                                                                       0.0s
+ => CACHED [4/5] RUN pip install --no-cache-dir -r requirements.txt                                                0.0s
+ => CACHED [5/5] COPY app/ ./                                                                                      0.0s
+ => exporting to image                                                                                             0.2s
+ => => exporting layers                                                                                            0.0s
+ => => exporting manifest sha256:b46ad13f9cd1ed99d1bf08d78eeeaaf3082705d254e05d0f789aaf7cec56d123                  0.0s
+ => => exporting config sha256:bfb8ed024442b8a907930d9893c51fa34ac9aaf90d43894b0427eaf9cfea38ea                    0.0s
+ => => exporting attestation manifest sha256:3619fe7180b916cacec234b97c8d39ccb5493e8e9b3ee156d56f4d2459b5428c      0.0s
+ => => exporting manifest list sha256:643018b7bf313bab7d9236f202a923770423d6f0df706de67d476a8b86965587             0.0s
+ => => naming to docker.io/studentname/flask-lab:compose-v1                                                        0.0si => => unpacking to docker.io/studentname/flask-lab:compose-v1                                                     0.0s
+ => resolving provenance for metadata file                                                                         0.0s
+[+] Building 1/1
+ ✔ web  Built                                                                                                      0.0s
+[+] Running 2/2thon-lab> docker-compose up -d
+ ✔ Network docker-python-lab_default  Created                                                                      0.1s
+ ✔ Container docker-python-lab-web-1  Started                                                                      0.5s
+PS G:\docker-python-lab> docker-compose ps
+time="2025-09-27T00:24:31+05:30" level=warning msg="G:\\docker-python-lab\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+NAME                      IMAGE                              COMMAND           SERVICE   CREATED         STATUS         PORTS
+docker-python-lab-web-1   studentname/flask-lab:compose-v1   "python app.py"   web       6 seconds ago   Up 5 seconds   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+PS G:\docker-python-lab> curl http://localhost:5000/
+
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"message":"Hello from containerized Flask app!"}
+
+RawContent        : HTTP/1.1 200 OK
+                    Connection: close
+                    Content-Length: 50
+                    Content-Type: application/json
+                    Date: Fri, 26 Sep 2025 18:54:37 GMT
+                    Server: Werkzeug/3.1.3 Python/3.11.13
+
+                    {"message":"Hello from containeriz...
+Forms             : {}
+Headers           : {[Connection, close], [Content-Length, 50], [Content-Type, application/json], [Date, Fri, 26 Sep
+                    2025 18:54:37 GMT]...}
+Images            : {}
+InputFields       : {}
+Links             : {}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 50
+
+
+
+[+] Running 2/2thon-lab> docker-compose down
+ ✔ Container docker-python-lab-web-1  Removed                                                                                                           10.5s
+ ✔ Network docker-python-lab_default  Removed                                                                                                            0.8s
+PS G:\docker-python-lab> docker login
