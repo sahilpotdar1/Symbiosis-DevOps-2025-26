@@ -1,0 +1,35 @@
+# -----------------------------
+# This is an Ansible Playbook
+# -----------------------------
+
+---
+- name: My First Playbook             # Play name (description of what this play does)
+  hosts: webservers                   # Target group (defined in inventory file)
+  become: yes                         # Run tasks with sudo/admin privileges
+  vars:                               # Variables (you can define values here and reuse)
+    http_port: 80
+
+  tasks:                              # Tasks are the actual steps Ansible performs
+    - name: Install Apache Web Server # Each task should have a descriptive name
+      ansible.builtin.yum:            # Module used (here yum is for package management in RHEL/CentOS)
+        name: httpd                   # Package name
+        state: present                # Ensure it's installed (present/absent/latest)
+
+    - name: Start and Enable Apache
+      ansible.builtin.service:        # "service" module manages system services
+        name: httpd
+        state: started                # Make sure service is running
+        enabled: yes                  # Ensure service runs on startup
+
+    - name: Deploy index.html file
+      ansible.builtin.copy:           # "copy" module copies file from controller → target machine
+        src: files/index.html         # Local path (on Ansible control node)
+        dest: /var/www/html/index.html # Destination on target node
+        mode: '0644'                  # File permissions (rw-r--r--)
+
+    - name: Open Firewall Port
+      ansible.posix.firewalld:        # Module to manage firewall rules
+        port: "{{ http_port }}/tcp"   # Uses variable defined above
+        permanent: yes
+        state: enabled
+        immediate: yes

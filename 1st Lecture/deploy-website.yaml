@@ -1,0 +1,58 @@
+---
+- name: Deploy Simple Static Website
+  hosts: webservers
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Clone static website repo
+      git:
+        repo: https://github.com/cloudacademy/static-website-example.git
+        dest: /var/www/static-site
+        force: yes
+
+    - name: Copy Nginx config
+      copy:
+        src: nginx-site.conf
+        dest: /etc/nginx/sites-available/static-site
+        mode: '0644'
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/static-site
+        dest: /etc/nginx/sites-enabled/static-site
+        state: link
+
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Verify Nginx is running
+      command: systemctl status nginx
+      register: nginx_status
+      changed_when: false
+
+    - name: Display Nginx status
+      debug:
+        msg: "{{ nginx_status.stdout }}"
